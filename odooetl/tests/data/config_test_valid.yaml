@@ -1,0 +1,16 @@
+%YAML 1.2
+---
+odoo:
+    # Connect Odoo via XMLRPC
+    protocol: xmlrpc
+    host: localhost
+    port: 8069
+    scheme: http
+    username: admin
+    password: admin
+    dbname: test
+
+# Parsers options
+parsers:
+    csv:
+        delimiter: ','

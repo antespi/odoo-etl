@@ -1,0 +1,29 @@
+%YAML 1.2
+---
+odoo:
+    # Connect Odoo via XMLRPC
+    # protocol: xmlrpc
+    # host: localhost
+    # port: 8069
+    # scheme: http
+    # username: admin
+    # password: admin
+    # dbname: test
+
+    # Connect via native python module
+    protocol: native
+    conf: /home/aespinosa/projects/odoo/v9/odoo-server.conf
+    login: admin
+    dbname: v9_l10n_es
+
+    # Common options
+    # context:  # Define it for using other default context
+    #     tracking_disable: True
+    # context_add:  # Define fo add options to default context
+    #     lang : es_ES
+
+# Parsers options
+parsers:
+    csv:
+        encoding: 'utf-8'
+        delimiter: ','
