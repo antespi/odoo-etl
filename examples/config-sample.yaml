@@ -12,7 +12,7 @@ odoo:
 
     # Connect via native python module
     protocol: native
-    conf: /home/aespinosa/projects/odoo/v9/odoo-server.conf
+    conf: odoo-server.conf
     login: admin
     dbname: v9_l10n_es
 
