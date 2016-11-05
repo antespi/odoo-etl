@@ -373,6 +373,8 @@ class BaseETL(object):
         for k, v in config.iteritems():
             if isinstance(v, filters.BaseFilter):
                 mapped[k] = v.map(item, mapped)
+            else:
+                mapped[k] = v
         return mapped
 
     def item_log(self, current, item, fields, mapped):
