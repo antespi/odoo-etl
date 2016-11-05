@@ -2,6 +2,7 @@
 # Copyright 2016 Antonio Espinosa (http://github.com/antespi)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+import decimal
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -62,6 +63,46 @@ def boolean_normalize(value):
             return True
     # By default, False
     return False
+
+
+def float_normalize(value, precision=2):
+    try:
+        if isinstance(value, bool) and value:
+            value = 1.
+        elif isinstance(value, (str, unicode)):
+            value = value.replace(',', '')
+            clean = value.replace('.', '', 1)
+            clean = clean.replace('-', '')
+            clean = clean.replace('+', '')
+            value = float(value) if clean.isdigit() else 0.
+        elif isinstance(value, (int, long, decimal.Decimal)):
+            value = float(value)
+        elif not isinstance(value, float):
+            value = 0.
+    except:
+        pass
+    if value and precision >= 0:
+        return round(value, precision)
+    return value
+
+
+def integer_normalize(value):
+    try:
+        if isinstance(value, bool) and value:
+            value = 1
+        elif isinstance(value, (str, unicode)):
+            value = value.replace(',', '')
+            clean = value.replace('.', '', 1)
+            clean = clean.replace('-', '')
+            clean = clean.replace('+', '')
+            value = int(value) if clean.isdigit() else 0
+        elif isinstance(value, float):
+            value = int(value)
+        elif not isinstance(value, (int, long)):
+            value = 0
+    except:
+        pass
+    return value
 
 
 class BaseFilter(object):

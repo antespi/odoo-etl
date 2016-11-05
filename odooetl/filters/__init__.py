@@ -4,8 +4,8 @@
 
 from .base import BaseFilter, stringify, nospaces, boolean_normalize
 
+from .number import FilterNumber, FilterInteger, FilterFloat
 from .boolean import FilterBoolean
-from .default import FilterDefault
 from .email import FilterEmail
 from .raw import FilterRaw
 from .stringify import FilterStringify
