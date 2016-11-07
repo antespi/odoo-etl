@@ -5,7 +5,7 @@
 import datetime
 import time
 from .base import (
-    BaseFilter, datetime_to_string, timezone_set, timezone_get)
+    BaseFilter, timezone_set, timezone_get)
 from .stringify import FilterStringify
 
 
@@ -13,7 +13,7 @@ class FilterTimestamp(BaseFilter):
     modules = {
         'date': datetime.date.fromtimestamp,
         'datetime': datetime.datetime.fromtimestamp,
-        'time': time.mktime,
+        'time': time.localtime,
     }
 
     def __init__(self, fields=None, default=False, config={}):
@@ -28,15 +28,13 @@ class FilterTimestamp(BaseFilter):
         self.tz = self.config.get('tz', False)
         self.current_tz = timezone_get(default='UTC')
 
-    def apply(self, value):
+    def _timestamp_get(self, value):
         f = FilterStringify(default=False, config=self.config)
         timestamp = f.apply(value)
-        if self.tz:
-            timezone_set(self.tz)
         if self.ifmt:
             ifmt = self.ifmt
             if not value:
-                return self.default
+                return None
             if not isinstance(ifmt, (list, tuple)):
                 ifmt = [ifmt]
             for format in ifmt:
@@ -47,22 +45,36 @@ class FilterTimestamp(BaseFilter):
                     t = False
             timestamp = time.mktime(t) if t else False
         if not timestamp:
-            return self.default
+            return None
         try:
             timestamp = float(timestamp)
         except:
-            return self.default
+            return None
+        return timestamp
+
+    def _timestamp_convert(self, timestamp):
         if self.offset:
             timestamp = timestamp + self.offset
         if self.utc:
             timestamp = int(time.mktime(time.gmtime(timestamp)))
+        return timestamp
+
+    def _timestamp_output(self, timestamp):
+        value = timestamp
         module = self.modules.get(self.type, None)
         if self.ofmt:
             value = time.strftime(self.ofmt, time.localtime(timestamp))
         elif module:
             value = module(timestamp)
-        else:
-            value = timestamp
+        return value
+
+    def apply(self, value):
+        if self.tz:
+            timezone_set(self.tz)
+        timestamp = self._timestamp_get(value)
+        if timestamp is None:
+            return self.default
+        value = self._timestamp_output(self._timestamp_convert(timestamp))
         if self.tz:
             timezone_set(self.current_tz)
         return value

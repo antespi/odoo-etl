@@ -64,6 +64,14 @@ class TestDate(TestCase):
         self.assertEqual(datetime.date(2016, 11, 6), f.apply('1478400420'))
         self.assertEqual(datetime.date(2016, 11, 5), f.apply('1478390399'))
 
+    def test_time(self):
+        # 1478443666.78678 => '2016-11-06 14:47:46' UTC
+        f = FilterTime(config={
+            'ifmt': '%Y-%m-%d %H:%M:%S',
+        })
+        self.assertEqual(
+            time.gmtime(1478443666), f.apply('2016-11-06 14:47:46'))
+
     def test_datetime_to_string(self):
         self.assertEqual(
             '2016-11-06',
