@@ -9,6 +9,7 @@ from ..safe_eval import expr_eval
 class FilterNumber(BaseFilter):
 
     def __init__(self, fields=None, default=0, config={}):
+        # type: integer or float
         super(FilterNumber, self).__init__(
             fields=fields, default=default, config=config)
         self.type = self.config.get('type', 'integer')
@@ -18,9 +19,10 @@ class FilterNumber(BaseFilter):
 
     def apply(self, value):
         if self.type == 'integer':
-            value = integer_normalize(value)
+            value = integer_normalize(value, default=self.default)
         else:
-            value = float_normalize(value, self.precision)
+            value = float_normalize(
+                value, precision=self.precision, default=self.default)
         return str(value) if self.stringify else value
 
     def map(self, item, mapped={}):

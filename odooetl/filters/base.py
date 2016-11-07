@@ -2,7 +2,10 @@
 # Copyright 2016 Antonio Espinosa (http://github.com/antespi)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+import os
 import decimal
+import datetime
+import time
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -21,6 +24,30 @@ def stringify(value):
     # Strip also NO-BREAK SPACEs
     value = value.replace('\xc2\xa0', ' ')
     value = value.strip()
+    return value
+
+
+def string_cast(value):
+    if isinstance(value, (str, unicode)):
+        value = stringify(value)
+        if value.lower() == 'false':
+            return False
+        if value.lower() == 'true':
+            return True
+        clean = value.replace('+', '')
+        clean = clean.replace('-', '')
+        try:
+            if clean.isdigit():
+                return int(value)
+        except:
+            pass
+        clean = clean.replace(',', '')
+        clean = clean.replace('.', '')
+        try:
+            if clean.isdigit():
+                return float(value)
+        except:
+            pass
     return value
 
 
@@ -65,7 +92,7 @@ def boolean_normalize(value):
     return False
 
 
-def float_normalize(value, precision=2):
+def float_normalize(value, precision=2, default=0.):
     try:
         if isinstance(value, bool) and value:
             value = 1.
@@ -78,31 +105,48 @@ def float_normalize(value, precision=2):
         elif isinstance(value, (int, long, decimal.Decimal)):
             value = float(value)
         elif not isinstance(value, float):
-            value = 0.
+            value = default
     except:
-        pass
-    if value and precision >= 0:
+        value = default
+    if value and isinstance(value, float) and precision >= 0:
         return round(value, precision)
     return value
 
 
-def integer_normalize(value):
+def integer_normalize(value, default=0):
     try:
         if isinstance(value, bool) and value:
             value = 1
         elif isinstance(value, (str, unicode)):
-            value = value.replace(',', '')
-            clean = value.replace('.', '', 1)
-            clean = clean.replace('-', '')
+            clean = value.replace('-', '')
             clean = clean.replace('+', '')
             value = int(value) if clean.isdigit() else 0
         elif isinstance(value, float):
             value = int(value)
         elif not isinstance(value, (int, long)):
-            value = 0
+            value = default
     except:
-        pass
+        value = default
     return value
+
+
+def datetime_to_string(value, ofmt, default=''):
+    if isinstance(value,
+                  (datetime.date, datetime.time, datetime.datetime)):
+        value = value.strftime(ofmt)
+    elif isinstance(value, time.struct_time):
+        value = time.strftime(ofmt, value)
+    elif not isinstance(value, (str, unicode)):
+        value = default
+    return value
+
+
+def timezone_set(timezone):
+    os.environ['TZ'] = timezone
+
+
+def timezone_get(default=None):
+    return os.environ.get('TZ', default)
 
 
 class BaseFilter(object):

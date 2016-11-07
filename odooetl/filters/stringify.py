@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 import re
-from .base import BaseFilter, stringify
+from .base import BaseFilter, stringify, string_cast
 
 
 class FilterStringify(BaseFilter):
@@ -18,6 +18,7 @@ class FilterStringify(BaseFilter):
         self.lfillchar = self.config.get('lfill', '')
         self.rfillchar = self.config.get('rfill', '')
         self.allowed_chars = self.config.get('allowed_chars', '')
+        self.cast = self.config.get('cast', False)
 
     def apply(self, value):
         value = stringify(value)
@@ -35,6 +36,8 @@ class FilterStringify(BaseFilter):
                 value = value.ljust(self.min_length, self.rfillchar)
         if not value and self.if_empty is not None:
             value = self.if_empty
+        if self.cast:
+            return string_cast(value)
         return value
 
     def map(self, item, mapped={}):

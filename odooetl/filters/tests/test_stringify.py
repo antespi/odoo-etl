@@ -30,6 +30,20 @@ class TestStringify(TestCase):
         self.assertEqual('empty', f.apply([]))
         self.assertEqual('empty', f.apply(None))
 
+    def test_cast(self):
+        f = FilterStringify(config={'cast': True}, default=None)
+        self.assertEqual(True, f.apply('True'))
+        self.assertEqual(False, f.apply('FALSE'))
+        self.assertEqual('f', f.apply('f'))
+        self.assertEqual(4, f.apply('4'))
+        self.assertEqual(-10, f.apply('-10'))
+        self.assertEqual(2.5, f.apply('2.5'))
+        self.assertEqual('+-1', f.apply('+-1'))
+        self.assertEqual('+-1.5', f.apply('+-1.5'))
+        self.assertEqual(False, f.apply({}))
+        self.assertEqual('[1, 2]', f.apply([1, 2]))
+        self.assertEqual(False, f.apply(None))
+
     def test_trailing_spaces(self):
         cases = {
             'word': ['word ', ' word', ' word '],
