@@ -10,7 +10,7 @@ class TestNumber(TestCase):
     def test_integer(self):
         cases = {
             1: ['1', 1, 1.0, True],
-            0: ['0', 0, 0.0, False, None, ''],
+            0: ['0', 0, 0.0, False, None, '', 'Hello', '2.2'],
             -2: ['-2', -2, -2.0, -2.4, -2.9],
             2: ['2', 2, 2.0, 2.4, 2.9],
         }
@@ -22,7 +22,7 @@ class TestNumber(TestCase):
     def test_float(self):
         cases = {
             1.: ['1', 1, 1.0, True],
-            0.: ['0', 0, 0.0, False, None, ''],
+            0.: ['0', 0, 0.0, False, None, '', 'Bye'],
             -2.: ['-2', -2, -2.0],
             -2.4: [-2.4, -2.4, -2.401, -2.399],
             3.14: ['3.14', 3.14, 3.1416, 3.14159],
