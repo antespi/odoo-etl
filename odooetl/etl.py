@@ -154,10 +154,10 @@ class BaseETL(object):
             return name
         xmlid = mapped.get('xmlid', False) or item.get('xmlid', False)
         if xmlid:
-            'XML ID = %s' % xmlid
+            return 'XML ID = %s' % xmlid
         obj_id = mapped.get('id', False) or item.get('id', False)
         if obj_id:
-            'ID = %s' % obj_id
+            return 'ID = %s' % obj_id
         return 'ID = %s' % current.id if current else ''
 
     def item_query_get(self, item, mapped):
@@ -241,7 +241,7 @@ class BaseETL(object):
         for query in queries:
             current = self.item_search_query(query, item, mapped, model=model)
             if current:
-                return current
+                break
         if not current:
             current = self.item_not_found(item, mapped)
         return current
@@ -328,7 +328,7 @@ class BaseETL(object):
             name = model + ',' + field
             if not source:
                 continue
-            for lang in self.translate_lang:
+            for lang in self.translate_langs:
                 f = filters.FilterStringify(
                     fields=field + '-' + lang, default=None)
                 value = f.map(item)
@@ -347,7 +347,8 @@ class BaseETL(object):
                         _logger.info(
                             "   [#] Translation (%s - %s) : %s",
                             name, lang, value)
-                        trans.write(trans.id, data)
+                        trans = trans[0]
+                        trans.write(data)
                     else:
                         _logger.info(
                             "   [+] Translation (%s - %s) : %s",
