@@ -82,3 +82,57 @@ class TestDate(TestCase):
         self.assertEqual(
             '2016-11-06', datetime_to_string('2016-11-06', '%Y-%m-%d'))
         self.assertEqual('', datetime_to_string(None, '%Y-%m-%d'))
+
+    def test_ifmt(self):
+        # 1478443666.78678 => '2016-11-06 14:47:46' UTC
+        f = FilterDate(config={
+            'ifmt': ['%Y-%m-%d %H:%M:%S', '%Y-%m-%d'],
+        })
+        self.assertEqual(datetime.date(2016, 11, 6), f.apply('2016-11-06'))
+        self.assertEqual(datetime.date(2016, 11, 6),
+                         f.apply('2016-11-06 10:11:12'))
+        self.assertEqual(False, f.apply('1478390400'))
+        self.assertEqual(False, f.apply(1478390400))
+        self.assertEqual(False, f.apply('06/11/2016'))
+        f = FilterDate(config={
+            'ifmt': ['%Y-%m-%d %H:%M:%S', '%Y-%m-%d', '%d/%m/%Y'],
+        })
+        self.assertEqual(datetime.date(2016, 11, 6), f.apply('06/11/2016'))
+
+    def test_ofmt(self):
+        # 1478443666.78678 => '2016-11-06 14:47:46' UTC
+        f = FilterTimestamp(config={
+            'ofmt': '%Y-%m-%d %H:%M:%S',
+        })
+        self.assertEqual('2016-11-06 14:47:46', f.apply(1478443666))
+        f = FilterTimestamp(config={
+            'ofmt': '%Y-%m-%d',
+        })
+        self.assertEqual('2016-11-06', f.apply(1478443666))
+        f = FilterTimestamp(config={
+            'ofmt': '%d/%m/%Y',
+        })
+        self.assertEqual('06/11/2016', f.apply(1478443666))
+
+    def test_offset(self):
+        # 1478443666.78678 => '2016-11-06 14:47:46' UTC
+        f = FilterTimestamp(config={
+            'offset': 3600,
+            'ofmt': '%Y-%m-%d %H:%M:%S',
+        })
+        self.assertEqual('2016-11-06 15:47:46', f.apply(1478443666))
+
+    def test_map(self):
+        item = {
+            'f1': 1478443666,
+            'f2': '1478443666',
+        }
+        result = {
+            'f1': '2016-11-06 15:47:46',
+            'f2': '2016-11-06 15:47:46',
+        }
+        mapped = {}
+        for field in item.keys():
+            mapped = FilterTimestamp(
+                fields=field, config={'ofmt': '%Y-%m-%d %H:%M:%S'}).map(item)
+        self.assertTrue(result, mapped)
