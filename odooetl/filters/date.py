@@ -25,7 +25,7 @@ class FilterTimestamp(BaseFilter):
         self.ofmt = self.config.get('ofmt', False)
         self.offset = self.config.get('offset', 0)
         self.utc = self.config.get('utc', True)
-        self.tz = self.config.get('tz', False)
+        self.tz = self.config.get('tz', 'UTC')
         self.current_tz = timezone_get(default='UTC')
 
     def _timestamp_get(self, value):
