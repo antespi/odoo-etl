@@ -30,7 +30,6 @@ def _log_level_set(log_level):
 class CliApplication(object):
     options = {}
     args = {}
-    config = {}
 
     def __init__(self, name=None, description=None, version="0.1",
                  log_level=logging.INFO):

@@ -4,6 +4,7 @@
 
 from unittest import TestCase
 from odooetl.etl import BaseETL
+from odooetl.filters import FilterStringify, FilterEmail
 
 db = {}
 
@@ -325,5 +326,19 @@ class TestETL(TestCase):
         self.assertEqual('OtherName2', translated.value)
 
     def test_item_mapping(self):
-        # TODO:
-        pass
+        item = {
+            'Name': 'MyName ',
+            'Email': 'myname@example.org\n',
+        }
+        result = {
+            'name': 'MyName',
+            'email': 'myname@example.org',
+            'fix': 10,
+        }
+        etl = SampleETL()
+        self.assertEqual({}, etl.item_mapping(None, item))
+        self.assertEqual(result, etl.item_mapping(None, item, config={
+            'name': FilterStringify(fields='Name'),
+            'email': FilterEmail(fields='Email'),
+            'fix': 10,
+        }))
