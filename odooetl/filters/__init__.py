@@ -9,5 +9,6 @@ from .date import FilterTimestamp, FilterDate, FilterDatetime, FilterTime
 from .number import FilterNumber, FilterInteger, FilterFloat
 from .boolean import FilterBoolean
 from .email import FilterEmail
+from .phone import FilterPhone
 from .raw import FilterRaw
 from .stringify import FilterStringify
