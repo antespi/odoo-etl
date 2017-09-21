@@ -1,0 +1,5 @@
+[MASTER]
+load-plugins=pylint_common
+
+[FORMAT]
+max-line-length=80
